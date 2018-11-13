@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jsp/common/tag.jsp"%>
+<%@ include file="/WEB-INF/jsp/common/css.jsp"%>
+<%@ include file="/WEB-INF/jsp/common/js.jsp"%>
+<html>
+<head>
+    <title>角色信息</title>
+    <meta charset="utf-8">
+
+</head>
+<script type="text/javascript">
+	$(function(){
+		
+	});
+	/* 重置功能 */
+	function reset(){
+  	   $("#queryStr").val("");
+    }
+	/* 查询功能 */
+    function query(){
+    	var select = $("#select").val();
+    	var queryStr = $("#queryStr").val();
+    	var data = {};
+    	data[select] = queryStr;
+    	$("#dg").datagrid("load",data);
+    }
+	/* 回车查询 */
+    document.onkeydown=function(event){
+        if(event.keyCode==13){ 
+        	query();
+        }
+    };
+    /* 状态格式化 */
+    function statusFor(val, row, index){
+    	if(val == 0){
+    		return "<label style='color:red'>禁用</label>"
+    	}else if(val == 1){
+    		return "<label style='color:green'>启用</label>"
+    	}
+    }
+    /* 新增 */
+    function add(){
+    	$("#dlg").dialog("open").dialog("setTitle","新增");
+    }
+    /* 作废 */
+    function del(){
+    	var row = $("#dg").datagrid("getSelected");
+    	if(row == null){
+    		alert("请选择一行数据！");
+    	}else{
+	    	$.ajax({
+	    		url: "${baseurl}/role/delete",
+	    		type: "post",
+	    		data: {
+	    			id: row.id,
+	    			status: "0"
+	    		},
+	    		success: function(data){
+	    			var code = JSON.parse(data).code;
+	    			if(code == 1){
+	    				$.messager.show({
+	        				title: "msg",
+	        				msg: "操作成功！",
+	        				timeout: 1000
+	        			});
+	    				$("#dg").datagrid("reload");
+	    			}else if(code == 0){
+	    				$.messager.alert({
+	        				title: "msg",
+	        				msg: "操作失败！"+JSON.parse(data).msg
+	        			});
+	    			}
+	    		}
+	    	});
+    	}
+    }
+    /* 编辑 */
+    function update(){
+    	var row = $("#dg").datagrid("getSelected");
+    	if(row == null){
+    		alert("请选择一行数据！");
+    	}else{
+	    	$("#dlg").dialog("open").dialog("setTitle", "编辑");
+	    	$("#fm").form("load", row);
+    	}
+    }
+    /* 保存 */
+    function save(){
+    	var title = $("#dlg").panel('options').title;
+    	var url;
+    	if(title == "新增"){
+    		url = "${baseurl}/role/save";
+    	}else if(title == "编辑"){
+    		url = "${baseurl}/role/update";
+    	}
+    	$("#fm").form("submit",{
+    		url: url,
+    		onSubmit: function(){
+    			return $(this).form('validate');
+    		},
+    		success: function(data){
+    			var code = JSON.parse(data).code;
+    			if(code == 1){
+    				$.messager.show({
+        				title: "msg",
+        				msg: "操作成功！",
+        				timeout: 2000
+        			});
+    				$("#dlg").dialog("close");
+    				$("#dg").datagrid("reload");
+    			}else if(code == 0){
+    				$.messager.alert({
+        				title: "msg",
+        				msg: "操作失败！"+JSON.parse(data).msg
+        			});
+    			}
+    		}
+    	});
+    }
+    var roleId = "";//用于保存角色id
+    /* 授权 */
+    function author(){
+    	var row = $("#dg").datagrid("getSelected");
+    	if(row == null){
+    		alert("请选择一行数据！");
+    	}else{
+    		roleId = row.id;
+    		$("#authorDlg").dialog("open").dialog("setTitle","授权");
+        	//获取所有权限资源
+        	$.ajax({
+    			url: "${baseurl}/role/getAllPerms",
+    			type: "post",
+    			success: function(data){
+    				var zNodes = JSON.parse(data).rows;
+    				$.fn.zTree.init($("#permTree"), setting, zNodes);
+    				var ztree = $.fn.zTree.getZTreeObj("permTree");
+    				//获取所有节点
+    	            var nodes = ztree.transformToArray(ztree.getNodes());
+    	            
+    	            for (var i = 0; i < nodes.length; i++) { //设置节点展开
+    	            	ztree.expandNode(nodes[i], true, false, true);
+    	            }
+    	          	//获取当前role所有的权限资源
+	            	$.ajax({
+	        			url: "${baseurl}/role/getPermIdsByRoleId",
+	        			type: "post",
+	        			data: {
+	        				roleId: roleId
+	        			},
+	        			success: function(data){
+	        				console.log(JSON.parse(data));
+	        				var rolePerms = JSON.parse(data).rows;
+	        				console.log("rolePerms"+rolePerms.length);
+	    	            	for(var i=0; i<rolePerms.length; i++){
+	    	            		//权限树中只要有的该角色的权限就勾选
+	    	            		for (var j = 0; j < nodes.length; j++) {
+	    	            			if(rolePerms[i].sysPermissionId == nodes[j].id){
+		    	            			ztree.checkNode(nodes[j], true, true);
+		    	            			break;
+	    	            			}
+	        	            	}
+	    	            	}
+	        			}
+	        		});
+	            	
+    			}
+    		});
+    	}
+    	
+    }
+    var setting = {
+    		check: {
+    			enable: true,
+    			/* 勾选影响父节点不影响子节点 */
+    			chkboxType: { "Y": "p", "N": "s" }
+    		},
+    		data: {
+    			simpleData: {
+    				enable: true
+    			}
+    		},
+    		callback: {
+    			onClick: function(event, treeId, treeNode) {
+    				//点击触发勾选checkbox
+    			    console.log(treeNode.tId + ", " + treeNode.name+","+treeNode.id);
+    			    
+    			    var ztree = $.fn.zTree.getZTreeObj("permTree");
+    			    if(treeNode.checked){
+    				    ztree.checkNode(treeNode, false, true);
+    			    }else{
+    			    	ztree.checkNode(treeNode, true, true);
+    			    }
+    			},
+    			onCheck: function (event, treeId, treeNode) {
+    				console.log(treeNode.tId + ", " + treeNode.name + "," + treeNode.checked);
+    			}
+    		},
+    		edit:{
+    			/*禁止框架触发url */
+    			enable: true,
+    			showRemoveBtn: false,
+    			showRenameBtn: false,
+    		}
+    	};
+    /* 保存授权 */
+    function saveAuth(){
+    	var ztree = $.fn.zTree.getZTreeObj("permTree");
+    	var nodes = ztree.getCheckedNodes();
+    	/* 取出所有点击的节点的id */
+    	var ids = "";
+    	$.each(nodes,function(i, n){
+    		ids += n.id + ",";
+    	});
+    	console.log("ids:"+ids);
+    	
+    	$.ajax({
+			url: "${baseurl}/role/author",
+			type: "post",
+			data: {
+				roleId: roleId,
+				ids: ids
+			},
+			success: function(data){
+				var code = JSON.parse(data).code;
+    			if(code == 1){
+    				$.messager.show({
+        				title: "msg",
+        				msg: JSON.parse(data).msg,
+        				timeout: 2000
+        			});
+    				$("#authorDlg").dialog("close");
+    				$("#dg").datagrid("reload");
+    			}else if(code == 0){
+    				$.messager.alert({
+        				title: "msg",
+        				msg: "操作失败！"+JSON.parse(data).msg
+        			});
+    			}
+			}
+		});
+    }
+</script>
+<body>
+<div id="searchPanel" class="easyui-panel" style="padding:3px;width:100%" title="查询窗口" iconCls="icon-search" collapsible="true"
+     closable="false">
+    <table id="searchTable">
+        <tr>
+            <td>
+                <select id="select" label="搜索选项：" class="easyui-combobox" style="width:200px"  panelHeight="auto">
+                	<option value="id">角色ID</option>
+                	<option value="name">角色名称</option>
+                </select>
+            </td>
+            <td>
+                <input type="text" id="queryStr" style="width:200px;" class="easyui-textbox" prompt="查询字符" />
+            </td>
+            
+            <td style="width:80px">&nbsp;</td>
+            <td>
+                <a onclick="query()" class="easyui-linkbutton" iconCls="icon-search" id="searchBtn">查询</a>&nbsp;
+                <a onclick="reset()" class="easyui-linkbutton" iconCls="icon-redo" id="resetBtn">重置</a>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<!-- 数据显示table -->
+    <table id="dg" title="列表窗口" class="easyui-datagrid" iconCls="icon-more" style="width:100%;height:90%"
+            url="${baseurl }/role/query" method="post" checkOnSelect="checked"
+            toolbar="#toolbar" pagination="true" remoteSort="false" collapsible="true"
+            rownumbers="true" fitColumns="false" singleSelect="true">
+
+        <thead>
+            <tr>
+                <th field="id" width="150" sortable="true">ID</th>
+                <th field="name" width="150" sortable="true">名称</th>
+                <th field="status" width="150" formatter="statusFor">状态</th>
+            </tr>
+        </thead>
+        
+    </table>
+    
+    <!-- 工具栏 -->
+    <div id="toolbar">
+    	<shiro:hasPermission name="role:add">
+	        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="add()">增加</a>
+	    </shiro:hasPermission>
+	    <shiro:hasPermission name="role:update">
+	        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="update()">编辑</a>
+	    </shiro:hasPermission>
+	    <shiro:hasPermission name="role:delete">
+	        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="del()">禁用</a>
+        </shiro:hasPermission>
+        <shiro:hasPermission name="role:author">
+        	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="author()">授权</a>
+        </shiro:hasPermission>
+    </div>
+    
+    <!-- 操作dialog -->
+    <div id="dlg" class="easyui-dialog" style="width:400px" data-options="closed:true,modal:true,border:'thin',buttons:'#dlg-buttons'">
+        <form id="fm" method="post" style="margin:0;padding:20px 50px">
+            <div style="margin-bottom:10px">
+                <input name="id"  label="id：" style="width:100%" hidden="true">
+            </div>
+            <div style="margin-bottom:10px">
+                <input name="name" class="easyui-textbox" required="true" label="名称：" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+            	<select name="status" class="easyui-combobox" editable="false" label="状态：" style="width:200px"  panelHeight="auto">
+					<option value="1">启用</option>
+					<option value="0">禁用</option>
+				</select>
+			</div>
+        </form>
+    </div>
+    <div id="dlg-buttons">
+        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="save()" style="width:90px">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">取消</a>
+    </div>
+    <!-- 配置权限资源dialog -->
+    <div id="authorDlg" class="easyui-dialog" style="width:400px;height:700px;top:20px" data-options="closed:true,modal:true,border:'thin',buttons:'#dlg-config-buttons'">
+        <ul id="permTree" class="ztree"></ul>
+    </div>
+	<div id="dlg-config-buttons">
+        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveAuth()" style="width:90px">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#authorDlg').dialog('close')" style="width:90px">取消</a>
+    </div>
+    
+</body>
+</html>

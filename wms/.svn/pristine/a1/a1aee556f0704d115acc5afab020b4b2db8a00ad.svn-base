@@ -1,0 +1,47 @@
+package com.zsc.pojo;
+
+import org.springframework.stereotype.Component;
+
+/**
+ * <p>Title: User</p>
+ * <p>Description: </p>
+ * <p>Company: </p>
+ * @author weil
+ * @date 2018年9月15日
+ */
+@Component
+public class User {
+	private Integer userNo;
+	private String userName;
+	private String pwd;
+	private Integer gender;
+	public Integer getUserNo() {
+		return userNo;
+	}
+	public void setUserNo(Integer userNo) {
+		this.userNo = userNo;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getPwd() {
+		return pwd;
+	}
+	public void setPwd(String pwd) {
+		this.pwd = pwd;
+	}
+	public Integer getGender() {
+		return gender;
+	}
+	public void setGender(Integer gender) {
+		this.gender = gender;
+	}
+	@Override
+	public String toString() {
+		return "User [userNo=" + userNo + ", userName=" + userName + ", pwd=" + pwd + ", gender=" + gender + "]";
+	}
+	
+}

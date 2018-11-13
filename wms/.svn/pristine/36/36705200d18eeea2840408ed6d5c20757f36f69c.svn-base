@@ -1,0 +1,45 @@
+package com.zsc.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+import com.zsc.dao.UserDao;
+import com.zsc.pojo.User;
+import com.zsc.service.UserService;
+
+/**
+ * <p>Title: UserServiceImpl</p>
+ * <p>Description: </p>
+ * <p>Company: </p>
+ * @author weil
+ * @date 2018年9月20日
+ */
+@Service
+public class UserServiceImpl implements UserService {
+	@Resource
+	private UserDao userDao; 
+	/* (non-Javadoc)
+	 * @see com.weil.demo.service.UserService#addUser(com.weil.demo.pojo.User)
+	 */
+
+	@Override
+	public void addUser(User user) {
+		userDao.addUser(user);
+		int a = 1/0;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.ruishun.service.UserService#getAll()
+	 */
+	@Override
+	public List<User> getAll() {
+		List<User> all = userDao.getAll();
+		return all;
+	}
+
+}

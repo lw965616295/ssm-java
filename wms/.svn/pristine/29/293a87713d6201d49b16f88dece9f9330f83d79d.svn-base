@@ -1,0 +1,62 @@
+package com.zsc.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zsc.dao.SysPermissionCustomMapper;
+import com.zsc.dao.TMdUserMapper;
+import com.zsc.pojo.ActiveUser;
+import com.zsc.pojo.SysPermission;
+import com.zsc.pojo.TMdUser;
+import com.zsc.pojo.TMdUserExample;
+import com.zsc.pojo.TMdUserExample.Criteria;
+import com.zsc.service.SysService;
+
+/**
+ * <p>Title: SysServiceImpl</p>
+ * <p>Description: </p>
+ * <p>Company: </p>
+ * @author weil
+ * @date 2018年10月9日
+ */
+@Service
+public class SysServiceImpl implements SysService {
+	/**用户mapper*/
+	@Autowired
+	private TMdUserMapper userMapper;
+	/*菜单权限mapper*/
+	@Autowired
+	private SysPermissionCustomMapper sysPermissionCustomMapper;
+	@Override
+	public ActiveUser authent(String username, String password) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TMdUser findUserByUsername(String username) throws Exception {
+		TMdUserExample example = new TMdUserExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andUserNameEqualTo(username);
+		List<TMdUser> list = userMapper.selectByExample(example);
+		if(list != null && list.size() == 1) {
+			return list.get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public List<SysPermission> findMenusById(String id) throws Exception {
+		List<SysPermission> menus = sysPermissionCustomMapper.findMenusById(id);
+		return menus;
+	}
+
+	@Override
+	public List<SysPermission> findPermissionsById(String id) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

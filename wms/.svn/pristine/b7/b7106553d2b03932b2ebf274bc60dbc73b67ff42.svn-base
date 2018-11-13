@@ -1,0 +1,33 @@
+package com.zsc.controller;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.zsc.pojo.User;
+import com.zsc.service.UserService;
+
+/**
+ * <p>Title: UserController</p>
+ * <p>Description: </p>
+ * <p>Company: </p>
+ * @author weil
+ * @date 2018年9月20日
+ */
+@Controller
+public class UserController {
+	@Resource
+	private UserService userService;
+	@RequestMapping("user/hello.action")
+	public String hello(String username) {
+		List<User> all = userService.getAll();
+		for (User user : all) {
+			System.err.println(user);
+		}
+		System.err.println(username);
+		return "home";
+	}
+}

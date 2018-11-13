@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jsp/tag.jsp"%>
+<html>
+<head>
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta charset="UTF-8">
+	<title>index</title>
+	<link rel="stylesheet" type="text/css" href="${baseurl}/js/easyui/themes/bootstrap/easyui.css">
+	<link rel="stylesheet" type="text/css" href="${baseurl}/js/easyui/themes/icon.css">
+	<script type="text/javascript" src="${baseurl}/js/easyui/jquery.min.js"></script>
+	<script type="text/javascript" src="${baseurl}/js/easyui/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="${baseurl}/js/easyui/locale/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="${baseurl}/js/datepicker/WdatePicker.js"></script>
+</head>
+<body class="easyui-layout">
+		<div region="north" style="height:55px">
+			<table>
+				<tr>
+					<td><img src="${baseurl}/images/zsc.png" style="height: 40px; width: 80px;"/></td>
+					<td ><font color="#0081C2" size="4">江苏掌仓系统</font></td>
+				</tr>
+			</table>
+			
+		</div>
+		<div region="south" style="background: rgb(210, 224, 242); height: 30px;" split="false">
+			<div align="center">
+				@2018 使用江苏掌仓系统前必读 | 帮助
+			</div>			
+		</div>
+		
+		<div region="west" title="导航菜单" style="width:400px;">
+			<div class="easyui-accordion" data-options="fit:true,border:false">
+				<div title="Title1" style="padding:10px;">
+					content1
+				</div>
+				<div title="Title2" data-options="selected:true" style="padding:10px;">
+					content2
+				</div>
+				<div title="Title3" style="padding:10px">
+					content3
+				</div>
+			</div>
+		</div>
+		<div region="center">
+			<div class="easyui-tabs" data-options="fit:true,border:false,plain:true">
+				<div title="欢迎使用" data-options="href:'${baseurl }/welcome.jsp'" style="padding:10px" ></div>
+				<div title="tab1" data-options="href:'${baseurl }/tab1.jsp'" style="padding:10px"></div>
+			</div>
+		</div>
+		
+</body>
+</html>

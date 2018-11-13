@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jsp/common/tag.jsp"%>
+<%@ include file="/WEB-INF/jsp/common/css.jsp"%>
+<%@ include file="/WEB-INF/jsp/common/js.jsp"%>
+<html>
+<head>
+    <title>销售出库</title>
+    <meta charset="utf-8">
+</head>
+<body>
+<!-- 查询 -->
+<div id="searchPanel" class="easyui-panel" style="padding:3px;" title="查询窗口" iconCls="icon-search" collapsible="true"
+     closable="false">
+    <table id="searchTable">
+        <tr>
+            <td>单据编号：</td>
+            <td>
+                <input type="text" name="searchNumber" id="searchNumber" style="width:100px;"/>
+            </td>
+            <td>商品信息：</td>
+            <td>
+                <input type="text" name="searchMaterial" id="searchMaterial" placeholder="名称，型号" style="width:100px;"/>
+            </td>
+            <td>单据日期：</td>
+            <td>
+               <input type="text" name="searchBeginTime" id="searchBeginTime"
+                       onClick="WdatePicker()" style="width:100px;"/>
+            </td>
+            <td>-</td>
+            <td>
+                <input type="text" name="searchEndTime" id="searchEndTime" onClick="WdatePicker()"
+                       style="width:100px;"/>
+            </td>
+            <td>&nbsp;</td>
+            <td>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="searchBtn">查询</a>&nbsp;
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" id="resetBtn">重置</a>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<!-- 数据显示table -->
+    <table id="dg" title="列表窗口" class="easyui-datagrid" iconCls="icon-more"
+            url="${baseurl }/user/getUsers" method="get" checkOnSelect="checked"
+            toolbar="#toolbar" pagination="true" remoteSort="false"
+            rownumbers="true" fitColumns="true" singleSelect="true">
+        <thead>
+            <tr>
+            	<th field="ck" checkbox="true"></th>
+                <th field="userNo" width="50">userNo</th>
+                <th field="userName" width="50" sortable="true">userName</th>
+                <th field="pwd" width="50" sortable="true">pwd</th>
+                <th field="gender" width="50">gender</th>
+            </tr>
+        </thead>
+        
+    </table>
+    <div id="toolbar">
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">增加</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">编辑</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">删除</a>
+    </div>
+    
+    <div id="dlg" class="easyui-dialog" style="width:400px" data-options="closed:true,modal:true,border:'thin',buttons:'#dlg-buttons'">
+        <form id="fm" method="post" novalidate style="margin:0;padding:20px 50px">
+            <h3>User Information</h3>
+            <div style="margin-bottom:10px">
+                <input name="firstname" class="easyui-textbox" required="true" label="First Name:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input name="lastname" class="easyui-textbox" required="true" label="Last Name:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input name="phone" class="easyui-textbox" required="true" label="Phone:" style="width:100%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input name="email" class="easyui-textbox" required="true" validType="email" label="Email:" style="width:100%">
+            </div>
+        </form>
+    </div>
+    <div id="dlg-buttons">
+        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">Save</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">Cancel</a>
+    </div>
+    <script type="text/javascript">
+        var url;
+        function newUser(){
+            $('#dlg').dialog('open').dialog('center').dialog('setTitle','New User');
+            $('#fm').form('clear');
+            url = 'save_user.php';
+        }
+        function editUser(){
+            var row = $('#dg').datagrid('getSelected');
+            if (row){
+                $('#dlg').dialog('open').dialog('center').dialog('setTitle','Edit User');
+                $('#fm').form('load',row);
+                url = 'update_user.php?id='+row.id;
+            }
+        }
+        function saveUser(){
+            $('#fm').form('submit',{
+                url: url,
+                onSubmit: function(){
+                    return $(this).form('validate');
+                },
+                success: function(result){
+                    var result = eval('('+result+')');
+                    if (result.errorMsg){
+                        $.messager.show({
+                            title: 'Error',
+                            msg: result.errorMsg
+                        });
+                    } else {
+                        $('#dlg').dialog('close');        // close the dialog
+                        $('#dg').datagrid('reload');    // reload the user data
+                    }
+                }
+            });
+        }
+        function destroyUser(){
+            var row = $('#dg').datagrid('getSelected');
+            if (row){
+                $.messager.confirm('Confirm','Are you sure you want to destroy this user?',function(r){
+                    if (r){
+                        $.post('destroy_user.php',{id:row.id},function(result){
+                            if (result.success){
+                                $('#dg').datagrid('reload');    // reload the user data
+                            } else {
+                                $.messager.show({    // show error message
+                                    title: 'Error',
+                                    msg: result.errorMsg
+                                });
+                            }
+                        },'json');
+                    }
+                });
+            }
+        }
+    </script>
+
+
+<div id="depotHeadDlgShow" class="easyui-dialog" style="width:1200px;padding:10px 20px;top:20px"
+     closed="true" modal="true" cache="false" collapsible="false" closable="true">
+    <table>
+        <tr>
+            <td style="width:60px;">客户：</td>
+            <td style="padding:5px;width:130px;">
+                <span id="OrganIdShow"></span>
+            </td>
+            <td style="width:70px;">销售人员：</td>
+            <td style="padding:5px;width:130px;">
+                <span id="SalesmanShow"></span>
+            </td>
+            <td style="width:80px;">单据日期：</td>
+            <td style="padding:5px;width:140px;">
+                <span id="OperTimeShow"></span>
+            </td>
+            <td style="width:70px;">单据编号：</td>
+            <td style="padding:5px;width:140px;">
+                <span id="NumberShow"></span>
+            </td>
+            <td style="width:100px;"></td>
+        </tr>
+        <tr>
+            <td colspan="9" style="width: 1130px;">
+                <!-- 商品列表table -->
+                <table id="materialDataShow" style="top:100px;border-bottom-color:#FFFFFF"></table>
+            </td>
+        </tr>
+        <tr>
+            <td style="width:60px;">单据备注：</td>
+            <td colspan="8" style="height:35px;">
+                <span id="RemarkShow" style="width: 1070px; height:35px;"></span>
+            </td>
+        </tr>
+        <tr>
+            <td>优惠率：</td>
+            <td>
+                <span id="DiscountShow" style="width: 110px;"></span>
+                %
+            </td>
+            <td>收款优惠：</td>
+            <td>
+                <span id="DiscountMoneyShow" style="width: 120px;"></span>
+            </td>
+            <td>优惠后金额：</td>
+            <td>
+                <span id="DiscountLastMoneyShow" style="width: 120px;"></span>
+            </td>
+            <td>本次收款：</td>
+            <td style="padding:5px">
+                <span id="ChangeAmountShow"></span>
+            </td>
+            <td style="width:100px;"></td>
+        </tr>
+        <tr>
+            <td>结算账户：</td>
+            <td style="padding:5px">
+                <span id="AccountIdShow"></span>
+            </td>
+            <td>本次欠款：</td>
+            <td style="padding:5px">
+                <span id="DebtShow"></span>
+            </td>
+            <td>销售费用：</td>
+            <td style="padding:5px">
+                <span id="OtherMoneyShow"></span>
+            </td>
+            <td>结算天数：</td>
+            <td style="padding:5px">
+                <span id="AccountDayShow"></span>
+            </td>
+            <td style="width:100px;"></td>
+        </tr>
+    </table>
+</div>
+<div id="depotHeadAccountDlg" class="easyui-dialog" style="width:380px;padding:10px 20px;top:80px"
+     closed="true" modal="true" buttons="#accountDlgButtons" cache="false" collapsible="false" closable="true">
+    <table class="account-dlg">
+        <tr class="account-head-tmp">
+            <td style="width:30px;"></td>
+            <td style="width:140px; padding:5px;">结算账户</td>
+            <td style="width:100px; padding:5px;">金额</td>
+        </tr>
+        <tr>
+            <td style="width:30px;"></td>
+            <td style="width:140px;text-align: center;">合计：</td>
+            <td style="width:100px;"><span id="accountMoneyTotalDlg"></span></td>
+        </tr>
+    </table>
+    <table class="tabs-tmp">
+        <tr class="account-content-tmp">
+            <td style="width:30px;"></td>
+            <td style="width:140px; padding:3px;"><select class="account-id-dlg" style="width:140px;"></select></td>
+            <td style="width:100px; padding:3px;"><input class="account-money-dlg" style="width:100px;"/></td>
+        </tr>
+    </table>
+</div>
+<div id="accountDlgButtons">
+    <a href="javascript:void(0)" id="saveDepotHeadAccountDlg" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+    <a href="javascript:void(0)" id="cancelDepotHeadAccountDlg" class="easyui-linkbutton" iconCls="icon-cancel">取消</a>
+</div>
+<div id="otherMoneyDlg" class="easyui-dialog" style="width:380px;padding:10px 20px;top:80px"
+     closed="true" modal="true" buttons="#otherMoneyDlgBtn" cache="false" collapsible="false" closable="true">
+    <table class="money-dlg">
+        <tr class="money-head-tmp">
+            <td style="width:30px;"></td>
+            <td style="width:140px; padding:5px;">结算账户</td>
+            <td style="width:100px; padding:5px;">金额</td>
+        </tr>
+        <tr>
+            <td style="width:30px;"></td>
+            <td style="width:140px;text-align: center;">合计：</td>
+            <td style="width:100px;"><span id="otherMoneyTotalDlg"></span></td>
+        </tr>
+    </table>
+    <table class="tabs-tmp">
+        <tr class="money-content-tmp">
+            <td style="width:30px;"></td>
+            <td style="width:140px; padding:3px;"><select class="money-id-dlg" style="width:140px;"></select></td>
+            <td style="width:100px; padding:3px;"><input class="other-money-dlg" style="width:100px;"/></td>
+        </tr>
+    </table>
+</div>
+<div id="otherMoneyDlgBtn">
+    <a href="javascript:void(0)" id="saveOtherMoneyDlg" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+    <a href="javascript:void(0)" id="cancelOtherMoneyDlg" class="easyui-linkbutton" iconCls="icon-cancel">取消</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ include file="/WEB-INF/jsp/tag.jsp"%>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<img src="${baseurl }/images/welcome.jpg"/>
+	</body>
+</html>

@@ -1,0 +1,20 @@
+package com.ruishun.dao;
+
+import java.util.List;
+
+import com.ruishun.pojo.User;
+
+/**
+ * <p>Title: UserDao</p>
+ * <p>Description: </p>
+ * <p>Company: </p>
+ * @author weil
+ * @date 2018年9月18日
+ */
+public interface UserDao {
+	public User findById1(Integer id);
+	public void addUser(User user);
+	public List<User> getAll();
+	public List<User> findByUser(User user);
+	
+}

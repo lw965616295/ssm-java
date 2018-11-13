@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zsc.dao.TMdUserMapper" >
+  <resultMap id="BaseResultMap" type="com.zsc.pojo.TMdUser" >
+    <id column="USER_ID" property="userId" jdbcType="DECIMAL" />
+    <result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="DEL" property="del" jdbcType="DECIMAL" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="LOGIN_TIME" property="loginTime" jdbcType="VARCHAR" />
+    <result column="MODI_BY" property="modiBy" jdbcType="VARCHAR" />
+    <result column="MODI_TIME" property="modiTime" jdbcType="TIMESTAMP" />
+    <result column="PASS_WORD" property="passWord" jdbcType="VARCHAR" />
+    <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+    <result column="THE_OWNER" property="theOwner" jdbcType="VARCHAR" />
+    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    <result column="WH_CODE" property="whCode" jdbcType="VARCHAR" />
+    <result column="USER_PIC_URL" property="userPicUrl" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.zsc.pojo.TMdUser" extends="BaseResultMap" >
+    <result column="ICON" property="icon" jdbcType="BLOB" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    USER_ID, CREATE_BY, CREATE_TIME, DEL, EMAIL, LOGIN_TIME, MODI_BY, MODI_TIME, PASS_WORD, 
+    PHONE, THE_OWNER, USER_NAME, WH_CODE, USER_PIC_URL
+  </sql>
+  <sql id="Blob_Column_List" >
+    ICON
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.zsc.pojo.TMdUserExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from T_MD_USER
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.zsc.pojo.TMdUserExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from T_MD_USER
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from T_MD_USER
+    where USER_ID = #{userId,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from T_MD_USER
+    where USER_ID = #{userId,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.zsc.pojo.TMdUserExample" >
+    delete from T_MD_USER
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.zsc.pojo.TMdUser" >
+    insert into T_MD_USER (USER_ID, CREATE_BY, CREATE_TIME, 
+      DEL, EMAIL, LOGIN_TIME, 
+      MODI_BY, MODI_TIME, PASS_WORD, 
+      PHONE, THE_OWNER, USER_NAME, 
+      WH_CODE, USER_PIC_URL, ICON
+      )
+    values (#{userId,jdbcType=DECIMAL}, #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{del,jdbcType=DECIMAL}, #{email,jdbcType=VARCHAR}, #{loginTime,jdbcType=VARCHAR}, 
+      #{modiBy,jdbcType=VARCHAR}, #{modiTime,jdbcType=TIMESTAMP}, #{passWord,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{theOwner,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+      #{whCode,jdbcType=VARCHAR}, #{userPicUrl,jdbcType=VARCHAR}, #{icon,jdbcType=BLOB}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zsc.pojo.TMdUser" >
+    insert into T_MD_USER
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="createBy != null" >
+        CREATE_BY,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="del != null" >
+        DEL,
+      </if>
+      <if test="email != null" >
+        EMAIL,
+      </if>
+      <if test="loginTime != null" >
+        LOGIN_TIME,
+      </if>
+      <if test="modiBy != null" >
+        MODI_BY,
+      </if>
+      <if test="modiTime != null" >
+        MODI_TIME,
+      </if>
+      <if test="passWord != null" >
+        PASS_WORD,
+      </if>
+      <if test="phone != null" >
+        PHONE,
+      </if>
+      <if test="theOwner != null" >
+        THE_OWNER,
+      </if>
+      <if test="userName != null" >
+        USER_NAME,
+      </if>
+      <if test="whCode != null" >
+        WH_CODE,
+      </if>
+      <if test="userPicUrl != null" >
+        USER_PIC_URL,
+      </if>
+      <if test="icon != null" >
+        ICON,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=DECIMAL},
+      </if>
+      <if test="createBy != null" >
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="del != null" >
+        #{del,jdbcType=DECIMAL},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="loginTime != null" >
+        #{loginTime,jdbcType=VARCHAR},
+      </if>
+      <if test="modiBy != null" >
+        #{modiBy,jdbcType=VARCHAR},
+      </if>
+      <if test="modiTime != null" >
+        #{modiTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="passWord != null" >
+        #{passWord,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="theOwner != null" >
+        #{theOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="whCode != null" >
+        #{whCode,jdbcType=VARCHAR},
+      </if>
+      <if test="userPicUrl != null" >
+        #{userPicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=BLOB},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.zsc.pojo.TMdUserExample" resultType="java.lang.Integer" >
+    select count(*) from T_MD_USER
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update T_MD_USER
+    <set >
+      <if test="record.userId != null" >
+        USER_ID = #{record.userId,jdbcType=DECIMAL},
+      </if>
+      <if test="record.createBy != null" >
+        CREATE_BY = #{record.createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.del != null" >
+        DEL = #{record.del,jdbcType=DECIMAL},
+      </if>
+      <if test="record.email != null" >
+        EMAIL = #{record.email,jdbcType=VARCHAR},
+      </if>
+      <if test="record.loginTime != null" >
+        LOGIN_TIME = #{record.loginTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.modiBy != null" >
+        MODI_BY = #{record.modiBy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.modiTime != null" >
+        MODI_TIME = #{record.modiTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.passWord != null" >
+        PASS_WORD = #{record.passWord,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phone != null" >
+        PHONE = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.theOwner != null" >
+        THE_OWNER = #{record.theOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userName != null" >
+        USER_NAME = #{record.userName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.whCode != null" >
+        WH_CODE = #{record.whCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userPicUrl != null" >
+        USER_PIC_URL = #{record.userPicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.icon != null" >
+        ICON = #{record.icon,jdbcType=BLOB},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update T_MD_USER
+    set USER_ID = #{record.userId,jdbcType=DECIMAL},
+      CREATE_BY = #{record.createBy,jdbcType=VARCHAR},
+      CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+      DEL = #{record.del,jdbcType=DECIMAL},
+      EMAIL = #{record.email,jdbcType=VARCHAR},
+      LOGIN_TIME = #{record.loginTime,jdbcType=VARCHAR},
+      MODI_BY = #{record.modiBy,jdbcType=VARCHAR},
+      MODI_TIME = #{record.modiTime,jdbcType=TIMESTAMP},
+      PASS_WORD = #{record.passWord,jdbcType=VARCHAR},
+      PHONE = #{record.phone,jdbcType=VARCHAR},
+      THE_OWNER = #{record.theOwner,jdbcType=VARCHAR},
+      USER_NAME = #{record.userName,jdbcType=VARCHAR},
+      WH_CODE = #{record.whCode,jdbcType=VARCHAR},
+      USER_PIC_URL = #{record.userPicUrl,jdbcType=VARCHAR},
+      ICON = #{record.icon,jdbcType=BLOB}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update T_MD_USER
+    set USER_ID = #{record.userId,jdbcType=DECIMAL},
+      CREATE_BY = #{record.createBy,jdbcType=VARCHAR},
+      CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+      DEL = #{record.del,jdbcType=DECIMAL},
+      EMAIL = #{record.email,jdbcType=VARCHAR},
+      LOGIN_TIME = #{record.loginTime,jdbcType=VARCHAR},
+      MODI_BY = #{record.modiBy,jdbcType=VARCHAR},
+      MODI_TIME = #{record.modiTime,jdbcType=TIMESTAMP},
+      PASS_WORD = #{record.passWord,jdbcType=VARCHAR},
+      PHONE = #{record.phone,jdbcType=VARCHAR},
+      THE_OWNER = #{record.theOwner,jdbcType=VARCHAR},
+      USER_NAME = #{record.userName,jdbcType=VARCHAR},
+      WH_CODE = #{record.whCode,jdbcType=VARCHAR},
+      USER_PIC_URL = #{record.userPicUrl,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zsc.pojo.TMdUser" >
+    update T_MD_USER
+    <set >
+      <if test="createBy != null" >
+        CREATE_BY = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="del != null" >
+        DEL = #{del,jdbcType=DECIMAL},
+      </if>
+      <if test="email != null" >
+        EMAIL = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="loginTime != null" >
+        LOGIN_TIME = #{loginTime,jdbcType=VARCHAR},
+      </if>
+      <if test="modiBy != null" >
+        MODI_BY = #{modiBy,jdbcType=VARCHAR},
+      </if>
+      <if test="modiTime != null" >
+        MODI_TIME = #{modiTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="passWord != null" >
+        PASS_WORD = #{passWord,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        PHONE = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="theOwner != null" >
+        THE_OWNER = #{theOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="whCode != null" >
+        WH_CODE = #{whCode,jdbcType=VARCHAR},
+      </if>
+      <if test="userPicUrl != null" >
+        USER_PIC_URL = #{userPicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        ICON = #{icon,jdbcType=BLOB},
+      </if>
+    </set>
+    where USER_ID = #{userId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.zsc.pojo.TMdUser" >
+    update T_MD_USER
+    set CREATE_BY = #{createBy,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      DEL = #{del,jdbcType=DECIMAL},
+      EMAIL = #{email,jdbcType=VARCHAR},
+      LOGIN_TIME = #{loginTime,jdbcType=VARCHAR},
+      MODI_BY = #{modiBy,jdbcType=VARCHAR},
+      MODI_TIME = #{modiTime,jdbcType=TIMESTAMP},
+      PASS_WORD = #{passWord,jdbcType=VARCHAR},
+      PHONE = #{phone,jdbcType=VARCHAR},
+      THE_OWNER = #{theOwner,jdbcType=VARCHAR},
+      USER_NAME = #{userName,jdbcType=VARCHAR},
+      WH_CODE = #{whCode,jdbcType=VARCHAR},
+      USER_PIC_URL = #{userPicUrl,jdbcType=VARCHAR},
+      ICON = #{icon,jdbcType=BLOB}
+    where USER_ID = #{userId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zsc.pojo.TMdUser" >
+    update T_MD_USER
+    set CREATE_BY = #{createBy,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      DEL = #{del,jdbcType=DECIMAL},
+      EMAIL = #{email,jdbcType=VARCHAR},
+      LOGIN_TIME = #{loginTime,jdbcType=VARCHAR},
+      MODI_BY = #{modiBy,jdbcType=VARCHAR},
+      MODI_TIME = #{modiTime,jdbcType=TIMESTAMP},
+      PASS_WORD = #{passWord,jdbcType=VARCHAR},
+      PHONE = #{phone,jdbcType=VARCHAR},
+      THE_OWNER = #{theOwner,jdbcType=VARCHAR},
+      USER_NAME = #{userName,jdbcType=VARCHAR},
+      WH_CODE = #{whCode,jdbcType=VARCHAR},
+      USER_PIC_URL = #{userPicUrl,jdbcType=VARCHAR}
+    where USER_ID = #{userId,jdbcType=DECIMAL}
+  </update>
+</mapper>

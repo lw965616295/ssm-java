@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zsc.dao.SysPermissionCustomMapper" >
+  <resultMap id="ResultMap" type="SysPermission" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+    <result column="URL" property="url" jdbcType="VARCHAR" />
+    <result column="PERCODE" property="percode" jdbcType="VARCHAR" />
+    <result column="P_ID" property="pId" jdbcType="DECIMAL" />
+    <result column="PIDS" property="pids" jdbcType="VARCHAR" />
+    <result column="SORTSTR" property="sortstr" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="DECIMAL" />
+  </resultMap>
+  <!-- 根据用户id查询菜单 -->
+	<select id="findMenusById" parameterType="string" resultMap="ResultMap">
+		SELECT *
+  		FROM sys_permission sp
+ 		WHERE sp.type = 'menu'
+   		and sp.id in (SELECT srp.sys_permission_id
+                   		FROM sys_role_permission srp
+                  		WHERE srp.sys_role_id in
+                        (SELECT sur.sys_role_id
+                           from sys_user_role sur
+                          	where sur.sys_user_id = #{id}))
+	</select>
+	<!-- 根据用户id查询权限 -->
+	<select id="findPermissionsById" parameterType="string" resultMap="ResultMap">
+		SELECT *
+  		FROM sys_permission sp
+ 		WHERE sp.type = 'permission'
+   		and sp.id in (SELECT srp.sys_permission_id
+                   		FROM sys_role_permission srp
+                  		WHERE srp.sys_role_id in
+                        (SELECT sur.sys_role_id
+                           from sys_user_role sur
+                          	where sur.sys_user_id = #{id}))
+	</select>
+</mapper>
